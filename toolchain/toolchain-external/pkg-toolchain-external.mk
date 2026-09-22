@@ -113,7 +113,35 @@ endif
 # Definitions of the list of libraries that should be copied to the target.
 #
 
-TOOLCHAIN_EXTERNAL_LIBS += ld*.so.* libgcc_s.so.* libatomic.so.*
+ifeq ($(BR2_TOOLCHAIN_EXTERNAL_MUSL),y)
+ifeq ($(BR2_RISCV_64),y)
+
+ifeq ($(BR2_RISCV_ABI_LP64),y)
+TOOLCHAIN_EXTERNAL_LIBS += ld-musl-riscv64-sf.so.*
+else ifeq ($(BR2_RISCV_ABI_LP64F),y)
+TOOLCHAIN_EXTERNAL_LIBS += ld-musl-riscv64-sp.so.*
+else ifeq ($(BR2_RISCV_ABI_LP64D),y)
+TOOLCHAIN_EXTERNAL_LIBS += ld-musl-riscv64.so.*
+endif
+
+else ifeq ($(BR2_RISCV_32),y)
+
+ifeq ($(BR2_RISCV_ABI_ILP32),y)
+TOOLCHAIN_EXTERNAL_LIBS += ld-musl-riscv32-sf.so.*
+else ifeq ($(BR2_RISCV_ABI_ILP32F),y)
+TOOLCHAIN_EXTERNAL_LIBS += ld-musl-riscv32-sp.so.*
+else ifeq ($(BR2_RISCV_ABI_ILP32D),y)
+TOOLCHAIN_EXTERNAL_LIBS += ld-musl-riscv32.so.*
+endif
+
+else
+TOOLCHAIN_EXTERNAL_LIBS += ld-musl-*.so.*
+endif
+else
+TOOLCHAIN_EXTERNAL_LIBS += ld*.so.*
+endif
+
+TOOLCHAIN_EXTERNAL_LIBS += libgcc_s.so.* libatomic.so.*
 
 ifneq ($(BR2_SSP_NONE),y)
 TOOLCHAIN_EXTERNAL_LIBS += libssp.so.*
